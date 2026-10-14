@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-10-14T13:53:33.096907",
+  "checks": [
+    {
+      "check_name": "duplicate_business_keys",
+      "issue_count": 0
+    },
+    {
+      "check_name": "missing_order_id",
+      "issue_count": 0
+    },
+    {
+      "check_name": "missing_product_id",
+      "issue_count": 0
+    },
+    {
+      "check_name": "invalid_quantity",
+      "issue_count": 0
+    },
+    {
+      "check_name": "invalid_unit_price",
+      "issue_count": 0
+    },
+    {
+      "check_name": "invalid_discount",
+      "issue_count": 0
+    },
+    {
+      "check_name": "bad_email_format",
+      "issue_count": 62
+    },
+    {
+      "check_name": "date_out_of_range",
+      "issue_count": 0
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(python --version)",
+      "Shell(pip:*)",
+      "Shell(python -m venv venv)",
+      "Shell(venv/bin/pip:*)",
+      "Shell(venv/bin/ruff:*)",
+      "Shell(venv/bin/mypy:*)",
+      "Shell(venv/bin/pytest:*)",
+      "Shell(venv/bin/python:*)",
+      "Shell(git:*)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.env/
+.envrc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Data artifacts
+*.csv
+*.xlsx
+*.parquet
+*.db
+*.duckdb
+
+# Reports/logs
+reports/*.log
+reports/*.html
+htmlcov/
+.coverage
+*.coverage
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keep folder structure placeholders
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/quarantine/.gitkeep
+!reports/.gitkeep
