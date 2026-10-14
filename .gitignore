@@ -35,6 +35,10 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+.directory
+
+# Command Code workspace files
+.commandcode/
 
 # Keep folder structure placeholders
 !data/raw/.gitkeep
