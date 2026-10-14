@@ -114,6 +114,8 @@ def cmd_report(args: argparse.Namespace) -> int:
 def cmd_run_all(args: argparse.Namespace) -> int:
     """Run the full pipeline end-to-end."""
     logger.info("Starting full pipeline run")
+    # Ensure validation/reporting use the same cleaned CSV the clean step writes.
+    args.cleaned = args.cleaned_csv
     cmd_generate(args)
     cmd_profile(args)
     cmd_clean(args)
