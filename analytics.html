@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics · Sales Data Cleaning Platform</title>
+<link rel="stylesheet" href="assets/site.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <a class="brand" href="index.html">◈ Sales<span>Cleaner</span></a>
+  <nav class="topnav">
+    <a href="index.html">Overview</a>
+    <a href="quality.html">Quality</a>
+    <a href="analytics.html" class="active">Analytics</a>
+    <a href="quarantine.html">Quarantine</a>
+    <a href="pipeline.html">Pipeline</a>
+  </nav>
+</div></div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Revenue analytics</h1>
+    <p>Realized revenue only — canceled and refunded orders are excluded. Computed by DuckDB over the cleaned dataset.</p>
+  </header>
+
+  <section>
+    <h2>Monthly revenue trend</h2>
+    <div class="card"><div class="chartbox"><canvas id="monthly"></canvas></div></div>
+  </section>
+
+  <section>
+    <h2>Revenue by category</h2>
+    <div class="card"><div class="chartbox"><canvas id="category"></canvas></div></div>
+  </section>
+
+  <section>
+    <h2>Top 15 countries</h2>
+    <div class="card"><div class="chartbox tall"><canvas id="country"></canvas></div></div>
+  </section>
+
+  <section>
+    <h2>Top 10 products by quantity</h2>
+    <div class="tablewrap"><table class="data" id="products">
+      <thead><tr><th>Product</th><th>Quantity</th><th>Revenue</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Summary metrics</h2>
+    <div class="tablewrap"><table class="data" id="summary">
+      <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <footer>Sales Data Cleaning &amp; Automation · <a href="https://github.com/madhielyousfi/sales-data-cleaning-automation">GitHub repo</a></footer>
+</div>
+
+<script src="assets/site-data.js"></script>
+<script>
+const d = window.SITE_DATA;
+const INDIGO = "#4f46e5";
+Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+new Chart(document.getElementById("monthly"), {
+  type: "line",
+  data: {
+    labels: d.monthly.map(m => m.month),
+    datasets: [{ label: "Revenue", data: d.monthly.map(m => m.revenue),
+      borderColor: INDIGO, backgroundColor: "rgba(79,70,229,.12)",
+      fill: true, tension: .3, pointRadius: 0 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById("category"), {
+  type: "bar",
+  data: {
+    labels: d.category.map(c => c.category),
+    datasets: [{ data: d.category.map(c => c.revenue),
+      backgroundColor: INDIGO, borderRadius: 6 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById("country"), {
+  type: "bar",
+  data: {
+    labels: d.country.map(c => c.country),
+    datasets: [{ data: d.country.map(c => c.revenue),
+      backgroundColor: "#06b6d4", borderRadius: 6 }]
+  },
+  options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } } }
+});
+const fmt = new Intl.NumberFormat("en-US");
+document.querySelector("#products tbody").innerHTML = d.products.map(p =>
+  `<tr><td>${p.product}</td><td>${fmt.format(p.quantity)}</td>` +
+  `<td>$${fmt.format(Math.round(p.revenue))}</td></tr>`).join("");
+document.querySelector("#summary tbody").innerHTML = d.summary.map(s =>
+  `<tr><td>${s.metric}</td><td>${s.value}</td></tr>`).join("");
+</script>
+</body>
+</html>

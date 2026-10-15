@@ -3,205 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sales Data Cleaning &amp; Automation — Messy CSVs in, audit-ready data out</title>
-<meta name="description" content="Reproducible Python + DuckDB pipeline that turns messy e-commerce sales exports into validated, analytics-ready datasets.">
-<style>
-  :root {
-    --primary: #4f46e5;
-    --accent: #06b6d4;
-    --ink: #0f172a;
-    --muted: #64748b;
-    --line: #e8ebf3;
-    --bg: #f6f7fb;
-    --radius: 16px;
-    --shadow: 0 1px 2px rgba(15,23,42,.05), 0 8px 24px -12px rgba(79,70,229,.18);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
-    color: var(--ink);
-    background: var(--bg);
-    line-height: 1.6;
-  }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-  nav {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 18px 0;
-  }
-  nav .logo { font-weight: 800; font-size: 17px; letter-spacing: -.01em; }
-  nav .logo span { color: var(--primary); }
-  nav a.link { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px; margin-left: 20px; }
-  nav a.link:hover { color: var(--primary); }
-  .hero {
-    background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 55%, #0891b2 100%);
-    color: #fff;
-    border-radius: 24px;
-    padding: 64px 56px;
-    margin: 12px 0 28px;
-    box-shadow: var(--shadow);
-  }
-  .badge {
-    display: inline-block; font-size: 12px; font-weight: 700;
-    letter-spacing: .08em; text-transform: uppercase;
-    background: rgba(255,255,255,.14);
-    border: 1px solid rgba(255,255,255,.25);
-    padding: 6px 14px; border-radius: 999px;
-  }
-  .hero h1 { font-size: 44px; line-height: 1.12; letter-spacing: -.02em; margin: 18px 0 12px; max-width: 760px; }
-  .hero p { color: rgba(255,255,255,.85); font-size: 17px; max-width: 680px; }
-  .cta { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
-  .btn {
-    display: inline-block; font-weight: 700; font-size: 15px;
-    padding: 13px 26px; border-radius: 12px; text-decoration: none;
-  }
-  .btn.primary { background: #fff; color: #312e81; }
-  .btn.ghost { border: 1px solid rgba(255,255,255,.4); color: #fff; }
-  .btn.primary:hover { background: #eef2ff; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
-  .stat { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
-  .stat .v { font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
-  .stat .l { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-  section { margin-bottom: 48px; }
-  h2 { font-size: 26px; letter-spacing: -.01em; margin-bottom: 6px; }
-  .sub { color: var(--muted); margin-bottom: 20px; max-width: 720px; }
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
-  .card h3 { font-size: 16px; margin-bottom: 6px; }
-  .card p { font-size: 14px; color: var(--muted); }
-  .card .tag { display: inline-block; font-size: 11px; font-weight: 800; color: var(--primary); background: #eef2ff; border-radius: 6px; padding: 2px 8px; margin-bottom: 10px; }
-  .pipe { display: flex; gap: 0; align-items: stretch; flex-wrap: wrap; }
-  .step { flex: 1 1 140px; background: #fff; border: 1px solid var(--line); padding: 16px; text-align: center; font-weight: 700; font-size: 14px; }
-  .step:first-child { border-radius: 12px 0 0 12px; }
-  .step:last-child { border-radius: 0 12px 12px 0; background: #eef2ff; color: var(--primary); }
-  .step small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; margin-top: 4px; }
-  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  figure.card { padding: 12px; }
-  figure img { width: 100%; border-radius: 8px; border: 1px solid var(--line); display: block; }
-  figcaption { font-size: 13px; color: var(--muted); padding: 10px 6px 4px; }
-  pre {
-    background: #0f172a; color: #e2e8f0; border-radius: 12px;
-    padding: 20px 22px; font-size: 14px; overflow-x: auto;
-  }
-  pre .c { color: #94a3b8; }
-  ul.out { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  ul.out li { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; font-size: 14px; }
-  ul.out code { color: var(--primary); font-weight: 700; }
-  .banner {
-    background: linear-gradient(135deg, var(--primary), #7c3aed);
-    color: #fff; border-radius: 20px; padding: 40px; text-align: center;
-  }
-  .banner h2 { color: #fff; }
-  .banner p { color: rgba(255,255,255,.85); margin-bottom: 20px; }
-  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 24px 0 40px; }
-  footer a { color: var(--primary); }
-  @media (max-width: 800px) {
-    .hero { padding: 40px 28px; }
-    .hero h1 { font-size: 30px; }
-    .stats, .grid, .shots, ul.out { grid-template-columns: 1fr; }
-  }
-</style>
+<title>Overview · Sales Data Cleaning Platform</title>
+<link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-<div class="wrap">
-
-  <nav>
-    <div class="logo">◈ Sales<span>Cleaner</span></div>
-    <div>
-      <a class="link" href="#pipeline">Pipeline</a>
-      <a class="link" href="#screenshots">Screenshots</a>
-      <a class="link" href="https://github.com/madhielyousfi/sales-data-cleaning-automation">GitHub</a>
-    </div>
+<div class="topbar"><div class="wrap">
+  <a class="brand" href="index.html">◈ Sales<span>Cleaner</span></a>
+  <nav class="topnav">
+    <a href="index.html" class="active">Overview</a>
+    <a href="quality.html">Quality</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="quarantine.html">Quarantine</a>
+    <a href="pipeline.html">Pipeline</a>
   </nav>
+</div></div>
 
+<div class="wrap">
   <header class="hero">
-    <span class="badge">Python · Pandas · DuckDB · Streamlit</span>
-    <h1>Messy sales CSVs in.<br>Audit-ready data out.</h1>
-    <p>A reproducible cleaning pipeline for e-commerce exports: deduplicates, repairs, standardizes, quarantines bad rows with reasons, and validates everything with independent SQL checks.</p>
-    <div class="cta">
-      <a class="btn primary" href="http://localhost:8501">Open the live app</a>
-      <a class="btn ghost" href="https://github.com/madhielyousfi/sales-data-cleaning-automation">View on GitHub</a>
-    </div>
+    <h1>Sales Data Cleaning Platform</h1>
+    <p>Messy e-commerce exports in — validated, analytics-ready datasets out. Every bad row quarantined with a reason, every clean row double-checked by independent SQL.</p>
+    <div class="meta" id="generated">Latest pipeline run: …</div>
   </header>
 
-  <div class="stats">
-    <div class="stat"><div class="v">7,650</div><div class="l">Raw rows profiled</div></div>
-    <div class="stat"><div class="v">7,106</div><div class="l">Cleaned rows</div></div>
-    <div class="stat"><div class="v">544</div><div class="l">Quarantined + reasons</div></div>
-    <div class="stat"><div class="v">95%</div><div class="l">Test coverage · 42 tests</div></div>
-  </div>
+  <div class="kpis" id="kpis"></div>
 
   <section>
-    <h2>Defects it handles</h2>
-    <p class="sub">Every defect class is detected, repaired where safe, and quarantined with an explicit reason where not. Nothing is silently dropped.</p>
-    <div class="grid">
-      <div class="card"><span class="tag">Dedup</span><h3>Duplicate order lines</h3><p>Business-key dedup on order + product + date. First occurrence kept.</p></div>
-      <div class="card"><span class="tag">Dates</span><h3>Bad &amp; future dates</h3><p>Unparseable, pre-2010, or future dates are quarantined as invalid_date.</p></div>
-      <div class="card"><span class="tag">Amounts</span><h3>Invalid quantities &amp; prices</h3><p>Zero, negative, or non-numeric values never reach revenue totals.</p></div>
-      <div class="card"><span class="tag">Discounts</span><h3>Discount chaos</h3><p>"20%" → 0.20 auto-converted. Out-of-range values quarantined.</p></div>
-      <div class="card"><span class="tag">Identity</span><h3>Bad emails &amp; missing IDs</h3><p>Malformed emails flagged; rows with no identifiable customer quarantined.</p></div>
-      <div class="card"><span class="tag">Labels</span><h3>Inconsistent categories</h3><p>Category, payment, and country variants mapped to canonical values.</p></div>
-    </div>
-  </section>
-
-  <section id="pipeline">
-    <h2>The pipeline</h2>
-    <p class="sub">One command runs it end to end. The Streamlit app mirrors every stage visually.</p>
+    <h2>How it flows</h2>
+    <p class="sub">One command runs it end to end; the Streamlit app mirrors every stage.</p>
     <div class="pipe">
-      <div class="step">Raw CSV/Excel<small>messy export</small></div>
-      <div class="step">Profile<small>nulls, dups</small></div>
-      <div class="step">Clean<small>pandas engine</small></div>
-      <div class="step">Quarantine<small>with reasons</small></div>
-      <div class="step">Validate<small>DuckDB SQL</small></div>
-      <div class="step">Report<small>exports + app</small></div>
-    </div>
-  </section>
-
-  <section id="screenshots">
-    <h2>Screenshots</h2>
-    <p class="sub">Real output from the pipeline and the interactive app.</p>
-    <div class="shots">
-      <figure class="card"><img src="docs/screenshots/01_raw_preview.png" alt="Raw data preview with defects"><figcaption>Raw data with visible defects before cleaning.</figcaption></figure>
-      <figure class="card"><img src="docs/screenshots/02_cleaned_preview.png" alt="Cleaned data preview"><figcaption>Cleaned, analytics-ready dataset.</figcaption></figure>
-      <figure class="card"><img src="docs/screenshots/03_quality_issues.png" alt="Data quality issues report"><figcaption>Independent SQL quality checks.</figcaption></figure>
-      <figure class="card"><img src="docs/screenshots/04_revenue_by_category.png" alt="Revenue by category chart"><figcaption>Revenue analytics by category.</figcaption></figure>
+      <div class="pstep">Raw<small>CSV / Excel</small></div>
+      <div class="pstep">Profile<small>nulls, dups</small></div>
+      <div class="pstep">Clean<small>pandas engine</small></div>
+      <div class="pstep">Quarantine<small>with reasons</small></div>
+      <div class="pstep">Validate<small>DuckDB SQL</small></div>
+      <div class="pstep">Report<small>exports + app</small></div>
     </div>
   </section>
 
   <section>
-    <h2>What you get</h2>
-    <p class="sub">Stakeholder-ready deliverables, every run.</p>
-    <ul class="out">
-      <li><code>cleaned_sales.csv / .xlsx</code> — valid, analytics-ready records</li>
-      <li><code>quarantined_sales.csv / .xlsx</code> — bad rows with reasons</li>
-      <li><code>data_quality_report.md / .json</code> — human + machine reports</li>
-      <li><code>summary_metrics.csv</code> — revenue, AOV, top category &amp; country</li>
-    </ul>
+    <h2>What gets fixed</h2>
+    <p class="sub">Eight defect classes, handled by rule — repaired where safe, quarantined where not.</p>
+    <div class="grid" id="defects"></div>
   </section>
 
   <section>
-    <h2>Run it yourself</h2>
-    <p class="sub">Python 3.12+, one command for the full pipeline.</p>
-<pre><span class="c"># install &amp; run the entire pipeline</span>
-pip install -r requirements-dev.txt
-python -m src.cli run-all --seed 42
-
-<span class="c"># or launch the interactive app</span>
-python -m streamlit run app.py</pre>
-  </section>
-
-  <section>
-    <div class="banner">
-      <h2>Need this for your store?</h2>
-      <p>Offered as a fixed-price Data Quality Health Check: cleaned files, quarantine audit, quality report, reusable code.</p>
-      <a class="btn primary" href="https://github.com/madhielyousfi/sales-data-cleaning-automation">Start from the repo</a>
+    <h2>Explore the run</h2>
+    <div class="grid">
+      <div class="card"><h3>Quality checks →</h3><p>8 independent DuckDB validations on the cleaned data. <a href="quality.html">Open quality</a></p></div>
+      <div class="card"><h3>Revenue analytics →</h3><p>Monthly trends, categories, countries, top products. <a href="analytics.html">Open analytics</a></p></div>
+      <div class="card"><h3>Quarantine audit →</h3><p>Every rejected row with its reason, filterable. <a href="quarantine.html">Open quarantine</a></p></div>
     </div>
   </section>
 
-  <footer>
-    Sales Data Cleaning &amp; Automation · MIT licensed ·
-    <a href="https://github.com/madhielyousfi/sales-data-cleaning-automation">GitHub</a>
-  </footer>
-
+  <footer>Sales Data Cleaning &amp; Automation · MIT · <a href="https://github.com/madhielyousfi/sales-data-cleaning-automation">GitHub repo</a></footer>
 </div>
+
+<script src="assets/site-data.js"></script>
+<script>
+const d = window.SITE_DATA;
+const fmt = new Intl.NumberFormat("en-US");
+const money = v => "$" + fmt.format(Math.round(v));
+document.getElementById("generated").textContent =
+  "Latest pipeline run: " + (d.generated_at || "unknown").replace("T", " ").slice(0, 19);
+const k = d.kpis;
+const cards = [
+  [fmt.format(k.raw), "Raw rows"],
+  [fmt.format(k.cleaned), "Cleaned rows"],
+  [fmt.format(k.quarantined), "Quarantined"],
+  [money(k.revenue), "Realized revenue"],
+  [money(k.aov), "Avg order value"],
+];
+document.getElementById("kpis").innerHTML = cards.map(c =>
+  `<div class="kpi"><div class="v">${c[0]}</div><div class="l">${c[1]}</div></div>`).join("");
+const defects = [
+  ["Duplicates", "Business-key dedup keeps the first order line."],
+  ["Bad dates", "Unparseable, pre-2010, or future dates quarantined."],
+  ["Quantities", "Zero, negative, or text quantities rejected."],
+  ["Prices", "Zero, negative, or text prices rejected."],
+  ["Discounts", "\u201C20%\u201D auto-converted; out-of-range quarantined."],
+  ["Emails & IDs", "Bad emails flagged; unidentifiable rows quarantined."],
+];
+document.getElementById("defects").innerHTML = defects.map(x =>
+  `<div class="card"><h3>${x[0]}</h3><p>${x[1]}</p></div>`).join("");
+</script>
 </body>
 </html>

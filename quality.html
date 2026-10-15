@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quality · Sales Data Cleaning Platform</title>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <a class="brand" href="index.html">◈ Sales<span>Cleaner</span></a>
+  <nav class="topnav">
+    <a href="index.html">Overview</a>
+    <a href="quality.html" class="active">Quality</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="quarantine.html">Quarantine</a>
+    <a href="pipeline.html">Pipeline</a>
+  </nav>
+</div></div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Data quality checks</h1>
+    <p>Independent DuckDB SQL validation re-runs every business rule on the cleaned data — so a bug in the pandas cleaning step can't slip through silently.</p>
+  </header>
+
+  <section>
+    <h2>Check results</h2>
+    <p class="sub">Zero issues expected on hard rules. Bad email format is informational — those rows are kept and flagged.</p>
+    <div class="pills" id="pills"></div>
+    <div class="tablewrap"><table class="data" id="checks">
+      <thead><tr><th>Check</th><th>Issue count</th><th>Status</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Rule reference</h2>
+    <div class="grid">
+      <div class="card"><h3>Dates</h3><p>Valid range 2010-01-01 → today. Anything else is quarantined before analytics.</p></div>
+      <div class="card"><h3>Amounts</h3><p>quantity &gt; 0 and unit_price &gt; 0, strictly. Discounts coerced to 0.0–0.80.</p></div>
+      <div class="card"><h3>Identity</h3><p>Missing order / product / customer IDs quarantined. Bad emails flagged, kept.</p></div>
+      <div class="card"><h3>Duplicates</h3><p>order_id + product_id + order_date kept once; repeats quarantined.</p></div>
+      <div class="card"><h3>Revenue flag</h3><p>canceled / refunded rows are kept but excluded from realized revenue.</p></div>
+      <div class="card"><h3>Totals</h3><p>total_amount = quantity × unit_price × (1 − discount), rounded to cents.</p></div>
+    </div>
+  </section>
+
+  <footer>Sales Data Cleaning &amp; Automation · <a href="https://github.com/madhielyousfi/sales-data-cleaning-automation">GitHub repo</a></footer>
+</div>
+
+<script src="assets/site-data.js"></script>
+<script>
+const d = window.SITE_DATA;
+document.getElementById("pills").innerHTML = d.quality.map(q => {
+  const cls = q.issues === 0 ? "pass" : "review";
+  return `<span class="pill ${cls}">${q.check}: ${q.issues}</span>`;
+}).join("");
+document.querySelector("#checks tbody").innerHTML = d.quality.map(q => {
+  const ok = q.issues === 0;
+  return `<tr><td>${q.check}</td><td>${q.issues}</td>` +
+    `<td><span class="pill ${ok ? "pass" : "review"}">${ok ? "Pass" : "Review"}</span></td></tr>`;
+}).join("");
+</script>
+</body>
+</html>

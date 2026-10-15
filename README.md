@@ -1,5 +1,7 @@
 # Sales Data Cleaning & Automation
 
+**Live demo:** https://madhielyousfi.github.io/sales-data-cleaning-automation/
+
 A reproducible, command-line data cleaning pipeline that turns messy e-commerce sales CSV/Excel exports into validated, analytics-ready datasets.
 
 ## Problem

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quarantine · Sales Data Cleaning Platform</title>
+<link rel="stylesheet" href="assets/site.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <a class="brand" href="index.html">◈ Sales<span>Cleaner</span></a>
+  <nav class="topnav">
+    <a href="index.html">Overview</a>
+    <a href="quality.html">Quality</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="quarantine.html" class="active">Quarantine</a>
+    <a href="pipeline.html">Pipeline</a>
+  </nav>
+</div></div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Quarantine audit</h1>
+    <p>Bad rows are never silently dropped. Each carries a <b>quarantine_reason</b> for manual review and reprocessing.</p>
+  </header>
+
+  <section>
+    <h2>Reasons breakdown</h2>
+    <div class="card"><div class="chartbox"><canvas id="reasons"></canvas></div></div>
+  </section>
+
+  <section>
+    <h2>Sample of quarantined rows</h2>
+    <p class="sub" id="sample-note"></p>
+    <div class="toolbar">
+      <select id="reason-filter"><option value="">All reasons</option></select>
+      <input id="search" type="search" placeholder="Search order, product, category…">
+    </div>
+    <div class="tablewrap"><table class="data" id="rows">
+      <thead><tr>
+        <th>Order</th><th>Date</th><th>Product</th><th>Category</th>
+        <th>Qty</th><th>Price</th><th>Reason</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <footer>Sales Data Cleaning &amp; Automation · <a href="https://github.com/madhielyousfi/sales-data-cleaning-automation">GitHub repo</a></footer>
+</div>
+
+<script src="assets/site-data.js"></script>
+<script>
+const d = window.SITE_DATA;
+Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+new Chart(document.getElementById("reasons"), {
+  type: "bar",
+  data: {
+    labels: d.quarantine_reasons.map(r => r.reason),
+    datasets: [{ data: d.quarantine_reasons.map(r => r.count),
+      backgroundColor: "#4f46e5", borderRadius: 6 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } } }
+});
+document.getElementById("sample-note").textContent =
+  `Showing ${d.quarantine_sample.length} of ${d.quarantine_sample_size} quarantined rows.`;
+const sel = document.getElementById("reason-filter");
+d.quarantine_reasons.forEach(r => {
+  const o = document.createElement("option");
+  o.value = r.reason; o.textContent = `${r.reason} (${r.count})`;
+  sel.appendChild(o);
+});
+function render() {
+  const reason = sel.value;
+  const q = document.getElementById("search").value.toLowerCase();
+  const rows = d.quarantine_sample.filter(r => {
+    if (reason && !String(r.quarantine_reason).includes(reason)) return false;
+    if (q && !Object.values(r).join(" ").toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.querySelector("#rows tbody").innerHTML = rows.map(r =>
+    `<tr><td>${r.order_id}</td><td>${r.order_date}</td><td>${r.product_name}</td>` +
+    `<td>${r.category}</td><td>${r.quantity}</td><td>${r.unit_price}</td>` +
+    `<td><span class="pill review">${r.quarantine_reason}</span></td></tr>`).join("");
+}
+sel.addEventListener("change", render);
+document.getElementById("search").addEventListener("input", render);
+render();
+</script>
+</body>
+</html>

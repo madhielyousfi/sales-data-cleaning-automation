@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline · Sales Data Cleaning Platform</title>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <a class="brand" href="index.html">◈ Sales<span>Cleaner</span></a>
+  <nav class="topnav">
+    <a href="index.html">Overview</a>
+    <a href="quality.html">Quality</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="quarantine.html">Quarantine</a>
+    <a href="pipeline.html" class="active">Pipeline</a>
+  </nav>
+</div></div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Reproducible pipeline</h1>
+    <p>Fixed seeds, pinned logic, independent SQL validation, 95% test coverage with CI. Re-running produces identical outputs.</p>
+  </header>
+
+  <section>
+    <h2>Run it</h2>
+<pre><span class="c"># full pipeline: generate → profile → clean → validate → report</span>
+python -m src.cli run-all --seed 42
+
+<span class="c"># individual stages</span>
+python -m src.cli generate --rows 7500 --seed 42
+python -m src.cli profile
+python -m src.cli clean
+python -m src.cli validate
+python -m src.cli report
+
+<span class="c"># interactive app</span>
+python -m streamlit run app.py</pre>
+  </section>
+
+  <section>
+    <h2>Stages</h2>
+    <div class="grid">
+      <div class="card"><h3>1 · Generate</h3><p><code>src/generate_data.py</code> — Faker + seeded RNG, ~7,500 rows with 12 documented defect classes.</p></div>
+      <div class="card"><h3>2 · Profile</h3><p><code>src/profiling.py</code> — nulls, duplicate business keys, top values snapshot.</p></div>
+      <div class="card"><h3>3 · Clean</h3><p><code>src/cleaning.py</code> — standardization, business rules, quarantine tagging.</p></div>
+      <div class="card"><h3>4 · Validate</h3><p><code>src/validation.py</code> + <code>sql/</code> — DuckDB quality checks &amp; analytics.</p></div>
+      <div class="card"><h3>5 · Report</h3><p><code>src/reporting.py</code> — Markdown, JSON, and summary CSV outputs.</p></div>
+      <div class="card"><h3>6 · Serve</h3><p><code>app.py</code> — Streamlit dashboard mirroring every stage. This static site is built from its outputs.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tech stack</h2>
+    <div class="pills">
+      <span class="pill">Python 3.12+</span><span class="pill">pandas</span>
+      <span class="pill">DuckDB</span><span class="pill">Streamlit</span>
+      <span class="pill">openpyxl</span><span class="pill">pycountry</span>
+      <span class="pill">pytest + coverage</span><span class="pill">ruff + mypy</span>
+      <span class="pill">GitHub Actions</span>
+    </div>
+  </section>
+
+  <footer>Sales Data Cleaning &amp; Automation · <a href="https://github.com/madhielyousfi/sales-data-cleaning-automation">GitHub repo</a></footer>
+</div>
+</body>
+</html>
