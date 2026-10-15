@@ -14,20 +14,28 @@ SCREENSHOTS = Path("docs/screenshots")
 
 
 def _save_table(df: pd.DataFrame, title: str, path: Path, rows: int = 5) -> None:
-    """Render a small DataFrame as an table image."""
-    fig, ax = plt.subplots(figsize=(12, 3))
+    """Render a small DataFrame as a large, readable table image."""
+    plt.rcParams.update({"font.size": 10})
+    fig, ax = plt.subplots(figsize=(18, 5))
     ax.axis("tight")
     ax.axis("off")
     subset = df.head(rows)
-    ax.table(
+    table = ax.table(
         cellText=subset.values,
         colLabels=subset.columns,
         cellLoc="left",
         loc="center",
     )
-    ax.set_title(title, fontweight="bold", pad=20)
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1, 2.0)
+    for (row, _col), cell in table.get_celld().items():
+        if row == 0:
+            cell.set_text_props(weight="bold", color="white")
+            cell.set_facecolor("#4F46E5")
+    ax.set_title(title, fontweight="bold", fontsize=15, pad=24)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=150, bbox_inches="tight")
+    fig.savefig(path, dpi=200, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -68,14 +76,15 @@ def generate_quality_chart() -> None:
         return
 
     df = pd.DataFrame(checks)
-    fig, ax = plt.subplots(figsize=(10, 5))
+    plt.rcParams.update({"font.size": 12})
+    fig, ax = plt.subplots(figsize=(12, 6))
     ax.bar(df["check_name"], df["issue_count"], color="#e15759")
     ax.set_xlabel("Quality Check")
     ax.set_ylabel("Issue Count")
-    ax.set_title("Remaining Data Quality Issues After Cleaning")
+    ax.set_title("Remaining Data Quality Issues After Cleaning", fontsize=14)
     plt.xticks(rotation=45, ha="right")
     fig.tight_layout()
-    fig.savefig(SCREENSHOTS / "03_quality_issues.png", dpi=150)
+    fig.savefig(SCREENSHOTS / "03_quality_issues.png", dpi=200)
     plt.close(fig)
 
 
@@ -88,13 +97,14 @@ def generate_revenue_chart() -> None:
         .sum()
         .sort_values(ascending=False)
     )
-    fig, ax = plt.subplots(figsize=(10, 5))
-    revenue.plot(kind="bar", ax=ax, color="#4e79a7")
+    plt.rcParams.update({"font.size": 12})
+    fig, ax = plt.subplots(figsize=(12, 6))
+    revenue.plot(kind="bar", ax=ax, color="#4F46E5")
     ax.set_xlabel("Category")
     ax.set_ylabel("Revenue (USD)")
-    ax.set_title("Revenue by Product Category")
+    ax.set_title("Revenue by Product Category", fontsize=14)
     fig.tight_layout()
-    fig.savefig(SCREENSHOTS / "04_revenue_by_category.png", dpi=150)
+    fig.savefig(SCREENSHOTS / "04_revenue_by_category.png", dpi=200)
     plt.close(fig)
 
 
