@@ -1,0 +1,25 @@
+row_id,order_id,order_date,customer_id,customer_name,customer_email,product_id,product_name,category,quantity,unit_price,discount,payment_method,country,order_status
+R0000001,ORD-0000001,2024-03-15,C0000001,Alice Smith,alice@example.com,P002,Mechanical Keyboard,Electronics,2,89.99,0.10,Credit Card,United States,completed
+R0000002,ORD-0000002,2024-03-16,C0000002,Bob Jones,bob@example.com,P008,Running Shoes,CLOTHING,1,79.99,0.00,cc,USA,completed
+R0000003,ORD-0000001,2024-03-15,C0000001,Alice Smith,alice@example.com,P002,Mechanical Keyboard,Electronics,2,89.99,0.10,Credit Card,United States,completed
+R0000004,,2024-03-17,C0000003,Carol White,carol@example.com,P021,Fiction Novel,Books,1,14.99,0.05,PayPal,France,completed
+R0000005,ORD-0000005,not-a-date,C0000004,David Brown,david@example.com,P016,Yoga Mat,Sports,1,29.99,0.00,Cash,Germany,completed
+R0000006,ORD-0000006,2099-12-31,C0000005,Eva Green,eva@example.com,P026,Face Moisturizer,Beauty,1,19.99,0.00,PayPal,Italy,completed
+R0000007,ORD-0000007,2024-04-01,C0000006,Frank Miller,frank@example.com,P003,USB-C Cable,Electronics,0,12.50,0.00,Credit Card,Spain,completed
+R0000008,ORD-0000008,2024-04-02,C0000007,Grace Lee,grace@example.com,P007,Denim Jeans,Clothing,-3,49.99,0.15,PayPal,Canada,completed
+R0000009,ORD-0000009,2024-04-03,C0000008,Henry Wilson,henry@example.com,P023,Notebook,Books,abc,6.99,0.00,Cash,Australia,completed
+R0000010,ORD-0000010,2024-04-04,C0000009,Ivy Chen,ivy@example.com,P018,Water Bottle,Sports,2,0,0.00,Credit Card,Japan,completed
+R0000011,ORD-0000011,2024-04-05,C0000010,Jack Taylor,jack@example.com,P030,Sunscreen SPF50,Beauty,1,free,0.00,PayPal,Brazil,completed
+R0000012,ORD-0000012,2024-04-06,C0000011,Karen Davis,karen@example.com,P033,Board Game,Toys,1,34.99,1.50,Credit Card,India,completed
+R0000013,ORD-0000013,2024-04-07,C0000012,Leo Martin,leo@example.com,P036,Organic Coffee,Food & Beverage,3,14.99,20%,Cash,China,completed
+R0000014,ORD-0000014,2024-05-01,C0000013,Mia Anderson,not-an-email,P006,Cotton T-Shirt,Clothing,2,19.99,0.00,Credit Card,Mexico,completed
+R0000015,ORD-0000015,2024-05-02,C0000014,,,P011,Coffee Maker,Home & Garden,1,99.99,0.00,Bank Transfer,Netherlands,completed
+R0000016,ORD-0000016,2024-05-03,C0000015,Nina Patel,nina@example.com,P004,Webcam 1080p,Electronics,1,59.99,0.20,bitcoin,United Kingdom,canceled
+R0000017,ORD-0000017,2024-05-04,C0000016,Oscar Garcia,oscar@example.com,P009,Wool Scarf,Clothing,1,24.99,0.00,PayPal,Deutschland,refunded
+R0000018,ORD-0000018,2024-05-05,C0000017,Paula Kim,paula@example.com,P027,Lip Balm,beauty,4,4.99,0.05,Cash,brasil,completed
+R0000019,ORD-0000019,2024-05-06,C0000018,Quinn Ross,quinn@example.com,P039,Sparkling Water,Food & Beverage,6,1.49,0.00,PayPal,Sweden,completed
+R0000020,ORD-0000020,2024-05-07,C0000019,Rita Lopez,rita@example.com,,Sunscreen SPF50,Beauty,1,14.99,0.00,Credit Card,Portugal,completed
+R0000021,ORD-0000021,2024-05-08,C0000020,Sam Carter,sam@example.com,P028,Shampoo,BEAUTY,2,9.99,0.25,wire,France,completed
+R0000022,ORD-0000022,2024-05-09,C0000021,Tina Brooks,tina@example.com,P035,Remote Car,Toys,1,39.99,0.00,Crypto,Norway,pending
+R0000023,ORD-0000023,2024-05-10,C0000022,Umar Khan,umar@example.com,P019,Dumbbell 5kg,SPORTS,2,24.99,0.10,Bank Transfer,Poland,completed
+R0000024,ORD-0000024,2024-05-11,C0000023,Vera Sidhu,vera@example.com,P012,Vacuum Bottle,Home & Garden,1,22.99,0.00,Credit Card,Denmark,completed

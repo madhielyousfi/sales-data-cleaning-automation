@@ -46,11 +46,11 @@ def _load_uploaded(uploaded: Any) -> pd.DataFrame:
 
 
 def _load_sample() -> pd.DataFrame:
-    sample = Path("data/raw/raw_sales.csv")
-    if not sample.exists():
-        msg = "Run `python -m src.cli generate` first to create sample data."
-        raise FileNotFoundError(msg)
-    return pd.read_csv(sample, dtype=str)
+    for candidate in (Path("data/raw/raw_sales.csv"), Path("data/raw/sample_sales.csv")):
+        if candidate.exists():
+            return pd.read_csv(candidate, dtype=str)
+    msg = "No sample data found. Upload a file or use Generate instead."
+    raise FileNotFoundError(msg)
 
 
 def _hero(active: int = 5) -> None:

@@ -45,3 +45,6 @@ Thumbs.db
 !data/processed/.gitkeep
 !data/quarantine/.gitkeep
 !reports/.gitkeep
+
+# Ship a small demo dataset for Streamlit Cloud deployments
+!data/raw/sample_sales.csv
